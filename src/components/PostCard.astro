@@ -1,0 +1,38 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+}
+
+const { href, title, description, pubDate, tags } = Astro.props;
+const formatted = pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<a
+  href={href}
+  class="group block border-b py-8 transition-colors first:pt-0"
+  style="border-color: var(--color-border);"
+>
+  <time class="font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">{formatted}</time>
+  <h2 class="font-heading mt-2 text-2xl font-bold transition-colors" style="color: var(--color-text);">
+    <span class="bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-300 group-hover:bg-[length:100%_1px]" style={`background-image: linear-gradient(var(--color-accent), var(--color-accent))`}>
+      {title}
+    </span>
+  </h2>
+  <p class="mt-2 line-clamp-2 text-sm leading-relaxed" style="color: var(--color-text-muted);">{description}</p>
+  {tags.length > 0 && (
+    <div class="mt-3 flex flex-wrap gap-2">
+      {tags.map((tag) => (
+        <span
+          class="rounded-full px-2.5 py-0.5 text-xs"
+          style="background-color: var(--color-accent-soft); color: var(--color-accent);"
+        >
+          #{tag}
+        </span>
+      ))}
+    </div>
+  )}
+</a>

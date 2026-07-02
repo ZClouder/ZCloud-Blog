@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "@fontsource/lxgw-wenkai/300.css";
+@import "@fontsource/lxgw-wenkai/700.css";
+@import "@fontsource/noto-sans-sc/400.css";
+@import "@fontsource/noto-sans-sc/500.css";
+@import "@fontsource/noto-sans-sc/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --font-heading: "LXGW WenKai", "Noto Sans SC", serif;
+  --font-sans: "Noto Sans SC", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+:root {
+  --color-bg: #faf8f4;
+  --color-surface: #ffffff;
+  --color-text: #26241f;
+  --color-text-muted: #6b6558;
+  --color-border: #e5e0d5;
+  --color-accent: #a8562f;
+  --color-accent-soft: #f0e2d3;
+}
+
+[data-theme="dark"] {
+  --color-bg: #161512;
+  --color-surface: #201f1b;
+  --color-text: #ece7dc;
+  --color-text-muted: #a39c8b;
+  --color-border: #35322b;
+  --color-accent: #e08b5f;
+  --color-accent-soft: #3a2a1e;
+}
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+}
+
+.prose-blog {
+  color: var(--color-text);
+  line-height: 1.8;
+  font-size: 1.0625rem;
+}
+
+.prose-blog > * + * {
+  margin-top: 1.25em;
+}
+
+.prose-blog h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2.5em;
+}
+
+.prose-blog h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 2em;
+}
+
+.prose-blog p {
+  color: var(--color-text);
+}
+
+.prose-blog a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-blog blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1.25em;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.prose-blog code {
+  font-family: var(--font-mono);
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+  padding: 0.15em 0.4em;
+  border-radius: 0.35em;
+  font-size: 0.875em;
+}
+
+.prose-blog pre {
+  font-family: var(--font-mono);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75em;
+  padding: 1.25em;
+  overflow-x: auto;
+}
+
+.prose-blog pre code {
+  background: none;
+  padding: 0;
+  color: var(--color-text);
+}
+
+.prose-blog ul, .prose-blog ol {
+  padding-left: 1.5em;
+}
+
+.prose-blog li {
+  margin-top: 0.4em;
+}
+
+.prose-blog ul {
+  list-style: disc;
+}
+
+.prose-blog ol {
+  list-style: decimal;
+}

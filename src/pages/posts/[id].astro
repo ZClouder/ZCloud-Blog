@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const formatted = post.data.pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <Header />
+  <main class="mx-auto max-w-3xl px-6 py-16">
+    <article>
+      <header class="mb-10">
+        <time class="font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">{formatted}</time>
+        <h1 class="font-heading mt-2 text-3xl font-bold sm:text-4xl" style="color: var(--color-text);">
+          {post.data.title}
+        </h1>
+        {post.data.tags.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <span
+                class="rounded-full px-2.5 py-0.5 text-xs"
+                style="background-color: var(--color-accent-soft); color: var(--color-accent);"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </header>
+      <div class="prose-blog">
+        <Content />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>
