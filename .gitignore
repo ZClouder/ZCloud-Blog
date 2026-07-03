@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # design extraction artifacts (large screenshots, reference-only, distilled into design.md)
 design-extractor/
+
+.vercel
+.env*
