@@ -12,16 +12,15 @@
     onerror="this.style.display='none'"
   />
 
-  <!-- Night: looping video (dark mode) -->
-  <video
+  <!-- Night: static image (dark mode) -->
+  <img
+    src="/images/hero-dark.png"
+    alt=""
     class="absolute inset-0 h-full w-full object-cover hidden dark:block"
-    autoplay
-    loop
-    muted
-    playsinline
-  >
-    <source src="/images/hero-dark.mp4" type="video/mp4" />
-  </video>
+    fetchpriority="high"
+    decoding="async"
+    onerror="this.style.display='none'"
+  />
 
   <!-- Gradient fallback (visible while assets load or if they fail) -->
   <div class="absolute inset-0 -z-10 bg-gradient-to-b from-sky-400 via-sky-200 to-white dark:from-indigo-950 dark:via-slate-900 dark:to-slate-950"></div>
