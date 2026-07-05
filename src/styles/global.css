@@ -16,23 +16,23 @@
 }
 
 :root {
-  --color-bg: #faf8f4;
+  --color-bg: #f0f7ff;
   --color-surface: #ffffff;
-  --color-text: #26241f;
-  --color-text-muted: #6b6558;
-  --color-border: #e5e0d5;
-  --color-accent: #a8562f;
-  --color-accent-soft: #f0e2d3;
+  --color-text: #1a2b3d;
+  --color-text-muted: #5d7a94;
+  --color-border: #d4e4f1;
+  --color-accent: #2e8bc0;
+  --color-accent-soft: #ddeeff;
 }
 
 [data-theme="dark"] {
-  --color-bg: #161512;
-  --color-surface: #201f1b;
-  --color-text: #ece7dc;
-  --color-text-muted: #a39c8b;
-  --color-border: #35322b;
-  --color-accent: #e08b5f;
-  --color-accent-soft: #3a2a1e;
+  --color-bg: #0b1120;
+  --color-surface: #131d2e;
+  --color-text: #e2eaf3;
+  --color-text-muted: #8ba3bd;
+  --color-border: #1f3044;
+  --color-accent: #64b5f6;
+  --color-accent-soft: #162a40;
 }
 
 html {

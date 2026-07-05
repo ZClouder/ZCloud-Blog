@@ -1,0 +1,63 @@
+---
+---
+
+<section class="relative h-screen supports-[height:100svh]:h-[100svh] w-full overflow-hidden" id="hero">
+  <!-- Background image: light mode (fallback gradient if no image yet) -->
+  <img
+    src="/images/hero-light.webp"
+    alt=""
+    class="absolute inset-0 h-full w-full object-cover dark:hidden"
+    fetchpriority="high"
+    decoding="async"
+    onerror="this.style.display='none'"
+  />
+  <!-- Background image: dark mode -->
+  <img
+    src="/images/hero-dark.webp"
+    alt=""
+    class="absolute inset-0 h-full w-full object-cover hidden dark:block"
+    fetchpriority="high"
+    decoding="async"
+    onerror="this.style.display='none'"
+  />
+  <!-- Gradient fallback (always visible behind images, also serves as placeholder) -->
+  <div class="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-white dark:from-indigo-950 dark:via-slate-900 dark:to-slate-950"></div>
+
+  <!-- Overlay for text contrast -->
+  <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
+    <h1 class="font-heading text-5xl font-bold drop-shadow-lg sm:text-6xl lg:text-7xl">
+      流雲の宝藏
+    </h1>
+    <p class="mt-4 max-w-md text-lg leading-relaxed opacity-90 drop-shadow-md sm:text-xl">
+      记录技术、设计与生活里那些值得留下的瞬间。
+    </p>
+    <div class="mt-6 flex items-center gap-5">
+      <a href="#" target="_blank" rel="noreferrer" aria-label="Email" class="text-white/80 transition hover:text-white drop-shadow-md" title="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+      </a>
+      <a href="#" target="_blank" rel="noreferrer" aria-label="GitHub" class="text-white/80 transition hover:text-white drop-shadow-md" title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+        </svg>
+      </a>
+      <a href="#" target="_blank" rel="noreferrer" aria-label="网易云音乐" class="text-white/80 transition hover:text-white drop-shadow-md" title="网易云音乐">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13.046 9.388a3.919 3.919 0 0 0-.66.19c-.809.312-1.447.991-1.666 1.775a2.269 2.269 0 0 0-.074.81c.048.546.333 1.05.764 1.35a1.483 1.483 0 0 0 2.01-.286c.406-.531.355-1.183.24-1.636-.098-.387-.22-.816-.345-1.249a64.76 64.76 0 0 1-.269-.954zm-.82 10.07c-3.984 0-7.224-3.24-7.224-7.223 0-.98.226-3.02 1.884-4.822A7.188 7.188 0 0 1 9.502 5.6a.792.792 0 1 1 .587 1.472 5.619 5.619 0 0 0-2.795 2.462 5.538 5.538 0 0 0-.707 2.7 5.645 5.645 0 0 0 5.638 5.638c1.844 0 3.627-.953 4.542-2.428 1.042-1.68.772-3.931-.627-5.238a3.299 3.299 0 0 0-1.437-.777c.172.589.334 1.18.494 1.772.284 1.12.1 2.181-.519 2.989-.39.51-.956.888-1.592 1.064a3.038 3.038 0 0 1-2.58-.44 3.45 3.45 0 0 1-1.44-2.514c-.04-.467.002-.93.128-1.376.35-1.256 1.356-2.339 2.622-2.826a5.5 5.5 0 0 1 .823-.246l-.134-.505c-.37-1.371.25-2.579 1.547-3.007.329-.109.68-.145 1.025-.105.792.09 1.476.592 1.709 1.023.258.507-.096 1.153-.706 1.153a.788.788 0 0 1-.54-.213c-.088-.08-.163-.174-.259-.247a.825.825 0 0 0-.632-.166.807.807 0 0 0-.634.551c-.056.191-.031.406.02.595.07.256.159.597.217.82 1.11.098 2.162.54 2.97 1.296 1.974 1.844 2.35 4.886.892 7.233-1.197 1.93-3.509 3.177-5.889 3.177zM0 12c0 6.627 5.373 12 12 12s12-5.373 12-12S18.627 0 12 0 0 5.373 0 12Z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-bounce">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-70">
+      <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+    </svg>
+  </div>
+</section>
