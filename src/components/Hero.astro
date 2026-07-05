@@ -2,26 +2,28 @@
 ---
 
 <section class="relative h-screen supports-[height:100svh]:h-[100svh] w-full overflow-hidden" id="hero">
-  <!-- Background image: light mode (fallback gradient if no image yet) -->
+  <!-- Day: static image with wind-sway animation (light mode) -->
   <img
-    src="/images/hero-light.webp"
+    src="/images/hero-light.jpg"
     alt=""
-    class="absolute inset-0 h-full w-full object-cover dark:hidden"
+    class="hero-img-animate absolute inset-0 h-full w-full object-cover dark:hidden"
     fetchpriority="high"
     decoding="async"
     onerror="this.style.display='none'"
   />
-  <!-- Background image: dark mode -->
+
+  <!-- Night: static image (dark mode) -->
   <img
-    src="/images/hero-dark.webp"
+    src="/images/hero-dark.png"
     alt=""
     class="absolute inset-0 h-full w-full object-cover hidden dark:block"
     fetchpriority="high"
     decoding="async"
     onerror="this.style.display='none'"
   />
-  <!-- Gradient fallback (always visible behind images, also serves as placeholder) -->
-  <div class="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-white dark:from-indigo-950 dark:via-slate-900 dark:to-slate-950"></div>
+
+  <!-- Gradient fallback (visible while assets load or if they fail) -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-sky-400 via-sky-200 to-white dark:from-indigo-950 dark:via-slate-900 dark:to-slate-950"></div>
 
   <!-- Overlay for text contrast -->
   <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30"></div>
@@ -61,3 +63,13 @@
     </svg>
   </div>
 </section>
+
+<style>
+  @keyframes wind-sway {
+    0%, 100% { transform: scale(1.05) translateX(0); }
+    50% { transform: scale(1.05) translateX(-1.5%); }
+  }
+  .hero-img-animate {
+    animation: wind-sway 25s ease-in-out infinite;
+  }
+</style>
