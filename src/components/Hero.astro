@@ -1,4 +1,6 @@
 ---
+const today = new Date();
+const dateLabel = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' });
 ---
 
 <section class="relative h-screen supports-[height:100svh]:h-[100svh] w-full overflow-hidden" id="hero">
@@ -14,7 +16,7 @@
 
   <!-- Night: static image (dark mode) -->
   <img
-    src="/images/hero-dark.png"
+    src="/images/hero-dark.jpg"
     alt=""
     class="absolute inset-0 h-full w-full object-cover hidden dark:block"
     fetchpriority="high"
@@ -28,15 +30,26 @@
   <!-- Overlay for text contrast -->
   <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30"></div>
 
+  <!-- Radial glow (innei 式光斑) -->
+  <div class="hero-glow pointer-events-none absolute inset-0"></div>
+
   <!-- Content -->
   <div class="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
-    <h1 class="font-heading text-5xl font-bold drop-shadow-lg sm:text-6xl lg:text-7xl">
+    <p class="flex items-center gap-2 font-mono text-xs tracking-[0.2em] opacity-80 drop-shadow-md sm:text-sm">
+      <span id="solar-term" data-date={dateLabel}>四时流转</span>
+      <span class="opacity-50">·</span>
+      <time datetime={today.toISOString().slice(0, 10)}>{dateLabel}</time>
+    </p>
+
+    <h1 class="shimmer-text font-heading mt-4 text-5xl font-bold drop-shadow-lg sm:text-6xl lg:text-7xl">
       流雲の宝藏
     </h1>
-    <p class="mt-4 max-w-md text-lg leading-relaxed opacity-90 drop-shadow-md sm:text-xl">
+
+    <p class="mt-5 max-w-md text-lg leading-relaxed opacity-90 drop-shadow-md sm:text-xl">
       记录技术、设计与生活里那些值得留下的瞬间。
     </p>
-    <div class="mt-6 flex items-center gap-5">
+
+    <div class="mt-7 flex items-center gap-5">
       <a href="mailto:cloud_zjq@163.com" aria-label="Email" class="text-white/80 transition hover:text-white drop-shadow-md" title="Email">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -73,3 +86,36 @@
     animation: wind-sway 25s ease-in-out infinite;
   }
 </style>
+
+<script is:inline>
+  // 节气问候：客户端计算，避免静态站构建后文案过期
+  (function () {
+    const el = document.getElementById('solar-term');
+    if (!el) return;
+
+    // [月, 日, 节气名, 短语]（固定日期表，误差 ±1 天）
+    const TERMS = [
+      [1, 5, '小寒', '朔风始凛'], [1, 20, '大寒', '冰封岁暮'],
+      [2, 4, '立春', '东风解冻'], [2, 19, '雨水', '润物无声'],
+      [3, 5, '惊蛰', '春雷始鸣'], [3, 20, '春分', '昼夜均分'],
+      [4, 4, '清明', '天清地明'], [4, 20, '谷雨', '雨生百谷'],
+      [5, 5, '立夏', '万物并秀'], [5, 21, '小满', '麦穗初齐'],
+      [6, 5, '芒种', '忙种时节'], [6, 21, '夏至', '日长至极'],
+      [7, 7, '小暑', '温风始至'], [7, 22, '大暑', '炎蒸如炉'],
+      [8, 7, '立秋', '凉风渐起'], [8, 23, '处暑', '暑气将止'],
+      [9, 7, '白露', '露凝为霜'], [9, 22, '秋分', '秋色平分'],
+      [10, 8, '寒露', '露气清冷'], [10, 23, '霜降', '霜叶始红'],
+      [11, 7, '立冬', '水始成冰'], [11, 22, '小雪', '初雪微落'],
+      [12, 7, '大雪', '雪盛时寒'], [12, 21, '冬至', '阳气始生'],
+    ];
+
+    const now = new Date();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    let current = TERMS[TERMS.length - 1];
+    for (const t of TERMS) {
+      if (m > t[0] || (m === t[0] && d >= t[1])) current = t;
+    }
+    el.textContent = current[2] + ' · ' + current[3];
+  })();
+</script>
