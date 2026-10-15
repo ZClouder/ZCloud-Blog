@@ -2,15 +2,113 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { projects } from '../data/projects';
 ---
 
-<BaseLayout title="项目">
+<BaseLayout title="项目" description="流雲の宝藏 — 开源项目与作品集">
   <Header />
   <main class="mx-auto max-w-3xl px-6 py-16">
-    <h1 class="font-heading text-3xl font-bold" style="color: var(--color-text);">项目</h1>
-    <div class="prose-blog mt-8">
-      <p>这里将展示我的开源项目与作品集，敬请期待。</p>
+    <header>
+      <h1 class="font-heading text-3xl font-bold" style="color: var(--color-text);">项目</h1>
+      <p class="mt-3 text-sm leading-relaxed" style="color: var(--color-text-muted);">
+        在 GitHub 上维护的开源项目与作品，多数围绕 AI Agent、RAG 与工程工具链。
+      </p>
+    </header>
+
+    <div class="mt-10 space-y-4">
+      {projects.map((p) => (
+        <article
+          class="project-card reveal rounded border p-5"
+          style="border-color: var(--color-border); background-color: var(--color-surface);"
+        >
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="min-w-0 text-lg font-bold" style="color: var(--color-text);">
+              <a href={p.href} target="_blank" rel="noreferrer" class="project-title inline-flex items-baseline gap-1.5">
+                <span>{p.name}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 opacity-60 transition-transform">
+                  <path d="M7 17 17 7M9 7h8v8"/>
+                </svg>
+              </a>
+            </h2>
+            {p.demo && (
+              <a
+                href={p.demo}
+                target="_blank"
+                rel="noreferrer"
+                class="shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-xs transition-colors"
+                style="border-color: var(--color-border); color: var(--color-text-muted);"
+              >
+                在线 Demo
+              </a>
+            )}
+          </div>
+
+          <p class="mt-1 font-mono text-xs" style="color: var(--color-accent);">{p.tagline}</p>
+
+          <p class="mt-3 text-sm leading-relaxed" style="color: var(--color-text-muted);">
+            {p.description}
+          </p>
+
+          <div class="mt-4 flex flex-wrap items-center gap-2">
+            {p.tags.map((t) => (
+              <span
+                class="rounded px-2 py-0.5 font-mono text-xs"
+                style="background-color: var(--color-accent-soft); color: var(--color-accent);"
+              >
+                {t}
+              </span>
+            ))}
+            {p.license && (
+              <span class="font-mono text-xs" style="color: var(--color-text-muted);">{p.license}</span>
+            )}
+            {p.badge && (
+              <span
+                class="ml-auto rounded-full border px-2.5 py-0.5 text-xs"
+                style="border-color: var(--color-accent); color: var(--color-accent);"
+              >
+                {p.badge}
+              </span>
+            )}
+          </div>
+        </article>
+      ))}
     </div>
+
+    <p class="mt-10 text-sm" style="color: var(--color-text-muted);">
+      更多仓库见
+      <a
+        href="https://github.com/ZClouder"
+        target="_blank"
+        rel="noreferrer"
+        class="underline underline-offset-2"
+        style="color: var(--color-accent);"
+      >github.com/ZClouder</a>。
+    </p>
   </main>
   <Footer />
 </BaseLayout>
+
+<style>
+  .project-card {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .project-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+  .project-card:hover .project-title svg {
+    transform: translate(1px, -1px);
+    opacity: 1;
+  }
+  .project-title {
+    transition: color 0.2s ease;
+  }
+  .project-card:hover .project-title {
+    color: var(--color-accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-card { transition: none; }
+    .project-card:hover { transform: none; }
+  }
+</style>
