@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import Toc from '../../components/Toc.astro';
+import Comments from '../../components/Comments.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -13,40 +15,104 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const formatted = post.data.pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 });
+const updated = post.data.updatedDate?.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// 阅读时长：中文按 400 字/分估算，去掉 markdown 语法符号
+const plain = (post.body ?? '')
+  .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+  .replace(/```[\s\S]*?```/g, (m) => m.replace(/`/g, ''))
+  .replace(/`([^`]*)`/g, '$1')
+  .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+  .replace(/^\s{0,3}>\s?/gm, '')
+  .replace(/[*_~|]/g, '')
+  .replace(/\s+/g, '');
+const readingMinutes = Math.max(1, Math.ceil(plain.length / 400));
+
+// 内容过期提示：距最后更新超过 180 天
+const lastTouched = (post.data.updatedDate ?? post.data.pubDate).valueOf();
+const staleDays = Math.floor((Date.now() - lastTouched) / 86400000);
+const isStale = staleDays > 180;
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
   <Header />
-  <main class="mx-auto max-w-3xl px-6 py-16">
-    <article>
-      <header class="mb-10">
-        <time class="font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">{formatted}</time>
-        <h1 class="font-heading mt-2 text-3xl font-bold sm:text-4xl" style="color: var(--color-text);">
-          {post.data.title}
-        </h1>
-        {post.data.tags.length > 0 && (
-          <div class="mt-4 flex flex-wrap gap-2">
-            {post.data.tags.map((tag) => (
-              <span
-                class="rounded-full px-2.5 py-0.5 text-xs"
-                style="background-color: var(--color-accent-soft); color: var(--color-accent);"
-              >
-                #{tag}
-              </span>
-            ))}
+  <main class="mx-auto max-w-5xl px-6 py-16">
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_200px] lg:gap-12">
+      <article class="min-w-0">
+        <header class="mb-10">
+          <div class="flex flex-wrap items-center gap-3 font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">
+            <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{formatted}</time>
+            <span class="opacity-50">·</span>
+            <span>{readingMinutes} 分钟读完</span>
+            {updated && (
+              <>
+                <span class="opacity-50">·</span>
+                <span>更新于 {updated}</span>
+              </>
+            )}
+          </div>
+          <h1 class="font-heading mt-3 text-3xl font-bold sm:text-4xl" style="color: var(--color-text);">
+            {post.data.title}
+          </h1>
+          {post.data.tags.length > 0 && (
+            <div class="mt-4 flex flex-wrap gap-2">
+              {post.data.tags.map((tag) => (
+                <span
+                  class="rounded-full px-2.5 py-0.5 text-xs"
+                  style="background-color: var(--color-accent-soft); color: var(--color-accent);"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        {isStale && (
+          <div
+            class="mb-8 rounded-md border-l-2 py-3 pl-4 text-sm"
+            style="border-color: var(--color-accent); background-color: var(--color-accent-soft); color: var(--color-text-muted);"
+          >
+            这篇写于 {staleDays} 天前，其中的信息可能已经过时。
           </div>
         )}
-      </header>
-      <div class="prose-blog">
-        <Content />
-      </div>
-    </article>
+
+        <div class="prose-blog">
+          <Content />
+        </div>
+
+        <footer class="mt-16 border-t pt-6 text-xs leading-relaxed" style="border-color: var(--color-border); color: var(--color-text-muted);">
+          <p>
+            本文采用
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"
+              target="_blank"
+              rel="noreferrer noopener license"
+              class="underline underline-offset-2"
+              style="color: var(--color-accent);"
+            >CC BY-NC-SA 4.0</a>
+            许可协议，转载请注明出处。
+          </p>
+        </footer>
+
+        <Comments />
+      </article>
+
+      <aside class="hidden lg:block" data-pagefind-ignore>
+        <Toc headings={headings} />
+      </aside>
+    </div>
   </main>
   <Footer />
 </BaseLayout>

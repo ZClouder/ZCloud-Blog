@@ -1,0 +1,64 @@
+---
+// giscus 评论（GitHub Discussions 驱动）
+// repo-id / category-id 已通过 GitHub API 取得，Discussions 已在仓库开启。
+// 唯一前置：在 https://github.com/apps/giscus 安装 App 并授权 ZClouder/ZCloud-Blog。
+const REPO = 'ZClouder/ZCloud-Blog';
+const REPO_ID = 'R_kgDOTLuxeg';
+const CATEGORY = 'Announcements';
+const CATEGORY_ID = 'DIC_kwDOTLuxes4DIe40';
+---
+
+<section class="mt-16 border-t pt-8" style="border-color: var(--color-border);" data-pagefind-ignore>
+  <h2 class="font-heading text-lg font-bold" style="color: var(--color-text);">留言</h2>
+  <div class="mt-4">
+    <script
+      src="https://giscus.app/client.js"
+      data-repo={REPO}
+      data-repo-id={REPO_ID}
+      data-category={CATEGORY}
+      data-category-id={CATEGORY_ID}
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async
+    ></script>
+  </div>
+</section>
+
+<script is:inline>
+  // giscus 主题跟随站点明暗切换
+  (function () {
+    function currentTheme() {
+      return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    }
+
+    function syncGiscus() {
+      const frame = document.querySelector('iframe.giscus-frame');
+      if (!frame) return;
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: currentTheme() } } },
+        'https://giscus.app'
+      );
+    }
+
+    // 首次加载：等 iframe 出现后同步一次
+    const finder = setInterval(() => {
+      if (document.querySelector('iframe.giscus-frame')) {
+        syncGiscus();
+        clearInterval(finder);
+      }
+    }, 500);
+    setTimeout(() => clearInterval(finder), 15000);
+
+    new MutationObserver(syncGiscus).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+  })();
+</script>
