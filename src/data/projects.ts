@@ -9,21 +9,11 @@ export interface Project {
   badge?: string;
 }
 
-// 手动维护：只放有实质内容的项目。
-// 已排除的仓库：fork 的他人项目（WeFlow / learn-claude-code / claw-code / MODULAR-RAG-MCP-SERVER / ChatGPT-Next-Web）、
-// 空仓库（cloud-blog-v2）、未成形的脚手架（Cloud_Blog）。
+// 手动维护：只放有实质内容的原创项目。
+// 排除规则：fork 的他人项目一律不收（含 ARTEX、WeFlow、learn-claude-code、claw-code、
+// MODULAR-RAG-MCP-SERVER、ChatGPT-Next-Web）、空仓库（cloud-blog-v2）、
+// 未成形的脚手架（Cloud_Blog，只有 create-next-app 默认内容）。
 export const projects: Project[] = [
-  {
-    name: 'ARTEX',
-    href: 'https://github.com/ZClouder/ARTEX',
-    tagline: 'AI 自主渗透测试系统',
-    description:
-      'Go 后端 + Next.js 前端。覆盖资产发现、探索链路可视化、流量录制与人在环路对话，让 Agent 自主推进渗透测试流程。',
-    tags: ['Go', 'Next.js', 'LLM Agent'],
-    demo: 'https://artex-demo.vercel.app/',
-    license: 'AGPL-3.0',
-    badge: '百度「agent+」攻防挑战赛冠军 · 团队作品',
-  },
   {
     name: 'Auro-Agent',
     href: 'https://github.com/ZClouder/Auro-Agent',
