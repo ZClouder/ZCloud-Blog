@@ -1,0 +1,50 @@
+---
+interface Props {
+  posts: { body?: string; data: { pubDate: Date } }[];
+}
+
+const { posts } = Astro.props;
+
+// 去掉 markdown 语法符号再计字，否则字数虚高约 20%
+function plainLength(body: string = '') {
+  return body
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')            // 图片
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')         // 链接保留文字
+    .replace(/```[\s\S]*?```/g, (m) => m.replace(/`/g, ''))
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')              // 标题标记
+    .replace(/^\s{0,3}>\s?/gm, '')                   // 引用标记
+    .replace(/[*_~|]/g, '')
+    .replace(/\s+/g, '')
+    .length;
+}
+
+const totalChars = posts.reduce((sum, p) => sum + plainLength(p.body), 0);
+const chars =
+  totalChars >= 10000
+    ? { value: (totalChars / 10000).toFixed(1), unit: '万字' }
+    : { value: String(totalChars), unit: '字' };
+
+// 从最早一篇文章算起的天数
+const earliest = posts.length
+  ? Math.min(...posts.map((p) => p.data.pubDate.valueOf()))
+  : Date.now();
+const days = Math.max(1, Math.ceil((Date.now() - earliest) / 86400000));
+
+const stats = [
+  { value: String(posts.length), unit: '篇', label: '文章' },
+  { value: chars.value, unit: chars.unit, label: '累计字数' },
+  { value: String(days), unit: '天', label: '笔耕不辍' },
+];
+---
+
+<div class="grid grid-cols-3 gap-4 border-y py-6" style="border-color: var(--color-border);">
+  {stats.map((s) => (
+    <div class="text-center">
+      <p class="font-mono text-2xl font-medium tracking-tight sm:text-3xl" style="color: var(--color-text);">
+        {s.value}<span class="ml-1 text-xs font-normal" style="color: var(--color-text-muted);">{s.unit}</span>
+      </p>
+      <p class="mt-1 text-xs tracking-wide" style="color: var(--color-text-muted);">{s.label}</p>
+    </div>
+  ))}
+</div>

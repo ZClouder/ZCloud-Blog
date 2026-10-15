@@ -1,0 +1,36 @@
+---
+interface Props {
+  posts: { id: string; data: { title: string; pubDate: Date; tags: string[] } }[];
+}
+
+const { posts } = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const shortDate = (d: Date) =>
+  `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
+---
+
+<ul class="divide-y" style="border-color: var(--color-border);">
+  {posts.map((post, i) => (
+    <li>
+      <a href={`/posts/${post.id}/`} class="recent-item group flex items-baseline gap-4 py-4">
+        <span class="recent-index font-mono text-sm" style="color: var(--color-text-muted);">
+          {pad(i + 1)}
+        </span>
+        <span class="min-w-0 flex-1">
+          <span class="recent-title block truncate text-base font-medium" style="color: var(--color-text);">
+            {post.data.title}
+          </span>
+          {post.data.tags.length > 0 && (
+            <span class="mt-1 block font-mono text-xs" style="color: var(--color-text-muted);">
+              {post.data.tags.map((t) => `#${t}`).join(' ')}
+            </span>
+          )}
+        </span>
+        <time class="font-mono text-xs" style="color: var(--color-text-muted);">
+          {shortDate(post.data.pubDate)}
+        </time>
+      </a>
+    </li>
+  ))}
+</ul>

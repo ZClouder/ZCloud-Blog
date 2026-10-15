@@ -4,31 +4,59 @@ import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import Footer from '../components/Footer.astro';
 import PostCard from '../components/PostCard.astro';
+import Stats from '../components/Stats.astro';
+import RecentList from '../components/RecentList.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+
+const RECENT_LIMIT = 5;
+const recent = posts.slice(0, RECENT_LIMIT);
 ---
 
 <BaseLayout title="流雲の宝藏">
   <Header transparent />
   <Hero />
   <main class="mx-auto max-w-3xl px-6">
-    <section class="py-16 sm:py-24">
-      <h2 class="font-heading text-2xl font-bold" style="color: var(--color-text);">最新文章</h2>
-      <div class="mt-8">
-        {posts.map((post) => (
-          <PostCard
-            href={`/posts/${post.id}/`}
-            title={post.data.title}
-            description={post.data.description}
-            pubDate={post.data.pubDate}
-            tags={post.data.tags}
-          />
-        ))}
+    <section class="reveal pt-16 sm:pt-20">
+      <Stats posts={posts} />
+    </section>
+
+    <section class="reveal pt-14 sm:pt-16">
+      <div class="flex items-baseline justify-between">
+        <h2 class="font-heading text-xl font-bold" style="color: var(--color-text);">近期笔墨</h2>
+        <a
+          href="/posts"
+          class="font-mono text-xs transition-opacity hover:opacity-70"
+          style="color: var(--color-text-muted);"
+        >
+          全部文章 →
+        </a>
+      </div>
+      <div class="mt-2">
+        <RecentList posts={recent} />
       </div>
     </section>
+
+    {/* 文章超过 RECENT_LIMIT 篇时才单独列出全部，避免与「近期笔墨」重复 */}
+    {posts.length > RECENT_LIMIT && (
+      <section class="reveal py-16 sm:py-20">
+        <h2 class="font-heading text-2xl font-bold" style="color: var(--color-text);">全部文章</h2>
+        <div class="mt-8">
+          {posts.map((post) => (
+            <PostCard
+              href={`/posts/${post.id}/`}
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              tags={post.data.tags}
+            />
+          ))}
+        </div>
+      </section>
+    )}
   </main>
   <Footer />
 </BaseLayout>
