@@ -1,0 +1,157 @@
+---
+// Pagefind 本地搜索弹窗。索引由构建后钩子生成，本地 dev 模式下不可用（会提示）。
+// 注意：弹窗必须挂在 <body> 直下（BaseLayout 里），不能放进 Header——
+// Header 有 backdrop-filter，会让 position:fixed 的子元素以 Header 为包含块。
+---
+
+<div id="search-modal" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true" aria-label="站内搜索">
+  <div id="search-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  <div class="relative mx-auto mt-20 w-full max-w-xl px-4 sm:mt-28">
+    <div
+      class="overflow-hidden rounded-lg border shadow-2xl"
+      style="border-color: var(--color-border); background-color: var(--color-bg);"
+    >
+      <div class="flex items-center justify-between border-b px-4 py-2.5" style="border-color: var(--color-border);">
+        <span class="font-mono text-xs tracking-widest" style="color: var(--color-text-muted);">搜索</span>
+        <button
+          id="search-close"
+          type="button"
+          class="font-mono text-xs transition-opacity hover:opacity-70"
+          style="color: var(--color-text-muted);"
+        >
+          ESC 关闭
+        </button>
+      </div>
+      <div id="search-container" class="max-h-[60vh] overflow-y-auto px-4 py-3">
+        <p id="search-hint" class="py-6 text-center text-sm" style="color: var(--color-text-muted);">
+          正在加载索引…
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Pagefind UI 主题变量对齐站点配色 */
+  #search-container {
+    --pagefind-ui-scale: 0.85;
+    --pagefind-ui-primary: var(--color-text);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-bg);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-accent-soft);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 6px;
+    --pagefind-ui-font: var(--font-sans);
+  }
+  #search-container .pagefind-ui__search-input {
+    color: var(--color-text);
+  }
+  #search-container .pagefind-ui__result-link {
+    color: var(--color-accent);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const modal = document.getElementById('search-modal');
+    const container = document.getElementById('search-container');
+    const hint = document.getElementById('search-hint');
+    const openBtn = document.getElementById('search-open');
+    const closeBtn = document.getElementById('search-close');
+    const backdrop = document.getElementById('search-backdrop');
+    if (!modal || !container) return;
+
+    let initialized = false;
+    let failed = false;
+
+    function loadCss(href) {
+      return new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.onload = resolve;
+        link.onerror = resolve;
+        document.head.appendChild(link);
+      });
+    }
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function init() {
+      if (initialized || failed) return;
+      try {
+        await loadCss('/pagefind/pagefind-ui.css');
+        await loadScript('/pagefind/pagefind-ui.js');
+        if (!window.PagefindUI) throw new Error('PagefindUI 未加载');
+        hint?.remove();
+        new window.PagefindUI({
+          element: '#search-container',
+          showSubResults: true,
+          showImages: false,
+          resetStyles: false,
+          translations: {
+            placeholder: '搜索文章…',
+            zero_results: '没有找到「[SEARCH_TERM]」相关的内容',
+            many_results: '找到 [COUNT] 条关于「[SEARCH_TERM]」的结果',
+            one_result: '找到 1 条关于「[SEARCH_TERM]」的结果',
+            searching: '搜索中…',
+            clear_search: '清除',
+            load_more: '加载更多结果',
+          },
+        });
+        initialized = true;
+        container.querySelector('input')?.focus();
+      } catch (e) {
+        failed = true;
+        if (hint) {
+          hint.textContent = '搜索索引尚未生成（本地 dev 模式无索引，构建部署后可用）。';
+          hint.style.display = '';
+        }
+      }
+    }
+
+    function open() {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      if (!initialized && !failed) init();
+      else container.querySelector('input')?.focus();
+    }
+
+    function close() {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // 按钮在 Header 里，可能晚于本脚本解析，用事件委托兜底
+    document.addEventListener('click', (e) => {
+      const t = e.target instanceof Element ? e.target.closest('#search-open') : null;
+      if (t) {
+        e.preventDefault();
+        open();
+      }
+    });
+
+    closeBtn?.addEventListener('click', close);
+    backdrop?.addEventListener('click', close);
+
+    document.addEventListener('keydown', (e) => {
+      const tag = (e.target && e.target.tagName) || '';
+      const typing = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
+      if (e.key === '/' && !typing) {
+        e.preventDefault();
+        open();
+      } else if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        close();
+      }
+    });
+  })();
+</script>
