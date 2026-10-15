@@ -1,6 +1,9 @@
 ---
-const today = new Date();
-const dateLabel = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' });
+import { SOLAR_TERMS, getSolarTerm } from '../data/solar-terms';
+
+const now = new Date();
+const term = getSolarTerm(now);
+const dateLabel = now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' });
 ---
 
 <section class="relative h-screen supports-[height:100svh]:h-[100svh] w-full overflow-hidden" id="hero">
@@ -35,10 +38,13 @@ const dateLabel = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numer
 
   <!-- Content -->
   <div class="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
-    <p class="flex items-center gap-2 font-mono text-xs tracking-[0.2em] opacity-80 drop-shadow-md sm:text-sm">
-      <span id="solar-term" data-date={dateLabel}>四时流转</span>
+    <p class="hero-meta flex items-center gap-2 font-mono text-xs tracking-[0.2em] sm:text-sm">
+      <svg class="h-[15px] w-[15px] shrink-0" aria-hidden="true">
+        <use id="solar-term-icon" href={`#term-${term.icon}`} />
+      </svg>
+      <span id="solar-term">{term.name} · {term.phrase}</span>
       <span class="opacity-50">·</span>
-      <time datetime={today.toISOString().slice(0, 10)}>{dateLabel}</time>
+      <time id="hero-date" datetime={now.toISOString().slice(0, 10)}>{dateLabel}</time>
     </p>
 
     <h1 class="shimmer-text font-heading mt-4 text-5xl font-bold drop-shadow-lg sm:text-6xl lg:text-7xl">
@@ -69,6 +75,52 @@ const dateLabel = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numer
     </div>
   </div>
 
+  <!-- 节气图标 sprite（描边风格，随 currentColor 走） -->
+  <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="term-snow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="3" x2="12" y2="21" />
+        <line x1="4.2" y1="7.5" x2="19.8" y2="16.5" />
+        <line x1="4.2" y1="16.5" x2="19.8" y2="7.5" />
+      </symbol>
+      <symbol id="term-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 21v-8" />
+        <path d="M12 13c0-3.5-2.5-6-6-6 0 3.5 2.5 6 6 6z" />
+        <path d="M12 13c0-3.5 2.5-6 6-6 0 3.5-2.5 6-6 6z" />
+      </symbol>
+      <symbol id="term-rain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="16" y1="14" x2="16" y2="21" />
+        <line x1="8" y1="14" x2="8" y2="21" />
+        <line x1="12" y1="16" x2="12" y2="23" />
+        <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" />
+      </symbol>
+      <symbol id="term-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+      </symbol>
+      <symbol id="term-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+      </symbol>
+      <symbol id="term-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5" />
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </symbol>
+      <symbol id="term-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z" />
+        <path d="M4.5 19.5C7 15 10 12 14 10" />
+      </symbol>
+      <symbol id="term-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+      </symbol>
+    </defs>
+  </svg>
+
   <!-- Scroll indicator -->
   <div class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-bounce">
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-70">
@@ -85,37 +137,45 @@ const dateLabel = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numer
   .hero-img-animate {
     animation: wind-sway 25s ease-in-out infinite;
   }
+
+  /* 亮色主题下这行压在明亮天空上，需要更实的描边式阴影才读得清 */
+  .hero-meta {
+    opacity: 0.95;
+    text-shadow:
+      0 1px 4px rgb(0 0 0 / 0.6),
+      0 0 14px rgb(0 0 0 / 0.3);
+  }
+  .hero-meta svg {
+    filter: drop-shadow(0 1px 3px rgb(0 0 0 / 0.6));
+  }
 </style>
 
-<script is:inline>
-  // 节气问候：客户端计算，避免静态站构建后文案过期
+<script define:vars={{ TERMS: SOLAR_TERMS }}>
+  // 节气与日期在客户端重算：静态站构建后文案不会过期
   (function () {
     const el = document.getElementById('solar-term');
-    if (!el) return;
-
-    // [月, 日, 节气名, 短语]（固定日期表，误差 ±1 天）
-    const TERMS = [
-      [1, 5, '小寒', '朔风始凛'], [1, 20, '大寒', '冰封岁暮'],
-      [2, 4, '立春', '东风解冻'], [2, 19, '雨水', '润物无声'],
-      [3, 5, '惊蛰', '春雷始鸣'], [3, 20, '春分', '昼夜均分'],
-      [4, 4, '清明', '天清地明'], [4, 20, '谷雨', '雨生百谷'],
-      [5, 5, '立夏', '万物并秀'], [5, 21, '小满', '麦穗初齐'],
-      [6, 5, '芒种', '忙种时节'], [6, 21, '夏至', '日长至极'],
-      [7, 7, '小暑', '温风始至'], [7, 22, '大暑', '炎蒸如炉'],
-      [8, 7, '立秋', '凉风渐起'], [8, 23, '处暑', '暑气将止'],
-      [9, 7, '白露', '露凝为霜'], [9, 22, '秋分', '秋色平分'],
-      [10, 8, '寒露', '露气清冷'], [10, 23, '霜降', '霜叶始红'],
-      [11, 7, '立冬', '水始成冰'], [11, 22, '小雪', '初雪微落'],
-      [12, 7, '大雪', '雪盛时寒'], [12, 21, '冬至', '阳气始生'],
-    ];
+    const dateEl = document.getElementById('hero-date');
+    const icon = document.getElementById('solar-term-icon');
 
     const now = new Date();
     const m = now.getMonth() + 1;
     const d = now.getDate();
+
     let current = TERMS[TERMS.length - 1];
     for (const t of TERMS) {
       if (m > t[0] || (m === t[0] && d >= t[1])) current = t;
     }
-    el.textContent = current[2] + ' · ' + current[3];
+
+    if (el) el.textContent = current[2] + ' · ' + current[3];
+    if (icon) icon.setAttribute('href', '#term-' + current[4]);
+    if (dateEl) {
+      dateEl.textContent = now.toLocaleDateString('zh-CN', {
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+      });
+      const pad = (n) => String(n).padStart(2, '0');
+      dateEl.setAttribute('datetime', `${now.getFullYear()}-${pad(m)}-${pad(d)}`);
+    }
   })();
 </script>
