@@ -1,18 +1,34 @@
 ---
+import { getCollection } from 'astro:content';
+import { relativeTime } from '../utils/time';
+import { markdownPreview } from '../utils/text';
+
 interface Props {
   transparent?: boolean;
 }
 const { transparent = false } = Astro.props;
+
 const nav = [
   { href: '/', label: '首页' },
-  { href: '/posts', label: '文章' },
-  { href: '/notes', label: '随记' },
+  { href: '/posts', label: '文章', panel: 'posts' },
+  { href: '/notes', label: '随记', panel: 'notes' },
   { href: '/projects', label: '项目' },
   { href: '/friends', label: '友邻' },
   { href: '/about', label: '关于' },
 ];
+
 // 去掉尾斜杠再比较，否则 /notes/ 与 /notes 不相等，导航高亮失效
 const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+// 悬浮面板只给两个内容入口用：这里没有 innei 那种「分类 / 专栏」子层级可展开，
+// 能诚实地展示出来的就是「最近写了什么」。
+const recentPosts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const recentNotes = (await getCollection('notes', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
 ---
 
 <header
@@ -31,17 +47,89 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
       流雲の宝藏
     </a>
 
-    <nav class="nav-scroll no-scrollbar flex min-w-0 flex-1 overflow-x-auto sm:justify-center">
+    <nav class="nav-scroll no-scrollbar flex min-w-0 flex-1 overflow-x-auto sm:justify-center sm:overflow-visible">
       <div class="nav-seg">
-        {nav.map((item) => (
-          <a
-            href={item.href}
-            class="nav-seg-item"
-            aria-current={currentPath === item.href ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))}
+        {nav.map((item) =>
+          item.panel ? (
+            <div class="nav-item-wrap" data-nav-wrap>
+              <a
+                href={item.href}
+                class="nav-seg-item"
+                aria-current={currentPath === item.href ? 'page' : undefined}
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls={`nav-panel-${item.panel}`}
+              >
+                {item.label}
+              </a>
+
+              <div
+                class="nav-panel"
+                id={`nav-panel-${item.panel}`}
+                data-nav-panel
+                role="region"
+                aria-label={`最近${item.label}`}
+              >
+                <div class="nav-panel-inner">
+                  <div class="flex items-baseline justify-between gap-4 px-3.5 pb-1.5 pt-3">
+                    <span class="font-mono text-[11px] tracking-wide" style="color: var(--color-text-muted);">
+                      最近{item.label}
+                    </span>
+                    <a href={item.href} class="font-mono text-[11px]" style="color: var(--color-accent);">
+                      全部 →
+                    </a>
+                  </div>
+
+                  {item.panel === 'posts' ? (
+                    recentPosts.length > 0 ? (
+                      <ul class="p-1.5 pt-0">
+                        {recentPosts.map((post) => (
+                          <li>
+                            <a href={`/posts/${post.id}/`} class="nav-panel-item">
+                              <span class="block truncate text-sm" style="color: var(--color-text);">
+                                {post.data.title}
+                              </span>
+                              <span class="mt-0.5 block font-mono text-[11px]" style="color: var(--color-text-muted);">
+                                {relativeTime(post.data.pubDate)}
+                              </span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="px-3.5 pb-3 text-xs" style="color: var(--color-text-muted);">还没有文章。</p>
+                    )
+                  ) : recentNotes.length > 0 ? (
+                    <ul class="p-1.5 pt-0">
+                      {recentNotes.map((note) => (
+                        <li>
+                          <a href={`/notes/#note-${note.id}`} class="nav-panel-item">
+                            <span class="block truncate text-sm" style="color: var(--color-text);">
+                              {markdownPreview(note.body, 18)}
+                            </span>
+                            <span class="mt-0.5 block font-mono text-[11px]" style="color: var(--color-text-muted);">
+                              {relativeTime(note.data.date)}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p class="px-3.5 pb-3 text-xs" style="color: var(--color-text-muted);">还没有随记。</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <a
+              href={item.href}
+              class="nav-seg-item"
+              aria-current={currentPath === item.href ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          )
+        )}
       </div>
     </nav>
 
@@ -111,12 +199,17 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
   #site-header[data-transparent="true"] .nav-seg-item:hover {
     color: #fff;
+    background-color: rgb(255 255 255 / 0.16);
   }
 
   #site-header[data-transparent="true"] .nav-seg-item[aria-current="page"] {
     background-color: rgb(255 255 255 / 0.24);
     color: #fff;
     box-shadow: none;
+  }
+
+  #site-header[data-transparent="true"] .nav-seg-item[aria-current="page"]:hover {
+    background-color: rgb(255 255 255 / 0.3);
   }
 </style>
 
@@ -156,5 +249,35 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
       );
       observer.observe(hero);
     }
+
+    // 悬浮面板：视觉由 CSS 的 :hover / :focus-within 负责，
+    // 这里只同步 aria-expanded，并让 Esc 能收起（鼠标仍停在上面时也管用）。
+    document.querySelectorAll('[data-nav-wrap]').forEach((wrap) => {
+      const link = wrap.querySelector('a[aria-haspopup]');
+      const panel = wrap.querySelector('[data-nav-panel]');
+      if (!link || !panel) return;
+
+      const setOpen = (open) => link.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+      wrap.addEventListener('mouseenter', () => {
+        panel.classList.remove('is-hidden');
+        setOpen(true);
+      });
+      wrap.addEventListener('mouseleave', () => {
+        panel.classList.remove('is-hidden');
+        setOpen(false);
+      });
+      wrap.addEventListener('focusin', () => setOpen(true));
+      wrap.addEventListener('focusout', () => setOpen(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll('[data-nav-panel]').forEach((panel) => panel.classList.add('is-hidden'));
+      document.querySelectorAll('[data-nav-wrap] a[aria-haspopup]').forEach((link) =>
+        link.setAttribute('aria-expanded', 'false')
+      );
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    });
   })();
 </script>

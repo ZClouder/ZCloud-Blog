@@ -82,16 +82,86 @@
 
 .nav-seg-item:hover {
   color: var(--color-text);
+  background-color: color-mix(in srgb, var(--color-text) 10%, transparent);
 }
 
-.nav-seg-item[aria-current="page"] {
+.nav-seg-item[aria-current="page"],
+.nav-seg-item[aria-current="page"]:hover {
   background-color: var(--color-card);
   color: var(--color-text);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.07), 0 0 0 1px rgb(0 0 0 / 0.04);
 }
 
-[data-theme="dark"] .nav-seg-item[aria-current="page"] {
+[data-theme="dark"] .nav-seg-item[aria-current="page"],
+[data-theme="dark"] .nav-seg-item[aria-current="page"]:hover {
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+/* ---- 导航悬浮面板（内容入口的最近条目预览） ----
+   只在 640px 以上启用：触屏没有 hover，窄屏放不下面板，那里点导航直接跳转。 */
+.nav-item-wrap {
+  position: relative;
+  display: flex;
+}
+
+.nav-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: 10px;
+  z-index: 60;
+}
+
+.nav-panel-inner {
+  width: 300px;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.12), 0 1px 3px rgb(0 0 0 / 0.06);
+}
+
+[data-theme="dark"] .nav-panel-inner {
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.3);
+}
+
+.nav-panel-item {
+  display: block;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  transition: background-color 0.15s ease;
+}
+
+.nav-panel-item:hover {
+  background-color: var(--color-surface);
+}
+
+@media (min-width: 640px) {
+  .nav-panel {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-4px);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s;
+  }
+
+  .nav-item-wrap:hover .nav-panel,
+  .nav-item-wrap:focus-within .nav-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Esc 关闭：鼠标还停在上面时也能收起来 */
+  .nav-panel.is-hidden {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-panel { transition: none; }
 }
 
 .no-scrollbar::-webkit-scrollbar {
