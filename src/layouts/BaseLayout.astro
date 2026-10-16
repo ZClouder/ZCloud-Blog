@@ -26,6 +26,16 @@ const pageTitle = title === siteTitle ? title : `${title} · ${siteTitle}`;
       const theme = stored ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.dataset.theme = theme;
     </script>
+    <noscript>
+      <style>
+        /* 入场效果全靠 JS 加 is-visible，禁用 JS 时不能把正文留成透明的 */
+        .reveal,
+        .stagger > * {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
   </head>
   <body class="min-h-screen antialiased">
     <slot />
@@ -52,9 +62,9 @@ const pageTitle = title === siteTitle ? title : `${title} · ${siteTitle}`;
       })();
     </script>
     <script is:inline>
-      // 滚动入场：元素进入视口后淡入上移
+      // 滚动入场：元素进入视口后淡入上移（.stagger 的容器只负责触发子元素错峰）
       (function () {
-        const els = document.querySelectorAll('.reveal');
+        const els = document.querySelectorAll('.reveal, .stagger');
         if (!els.length) return;
         if (!('IntersectionObserver' in window)) {
           els.forEach((el) => el.classList.add('is-visible'));

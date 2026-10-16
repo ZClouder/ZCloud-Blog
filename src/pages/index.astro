@@ -19,12 +19,12 @@ const recent = posts.slice(0, RECENT_LIMIT);
 <BaseLayout title="流雲の宝藏">
   <Header transparent />
   <Hero />
-  <main id="content" class="mx-auto max-w-3xl space-y-6 px-6 pb-6 pt-16 sm:pt-20">
-    <section class="card reveal">
+  <main id="content" class="stagger mx-auto max-w-3xl space-y-6 px-6 pb-6 pt-16 sm:pt-20">
+    <section class="card">
       <Stats posts={posts} />
     </section>
 
-    <section class="card reveal">
+    <section class="card">
       <div class="flex items-baseline justify-between">
         <h2 class="font-heading text-xl font-bold" style="color: var(--color-text);">近期笔墨</h2>
         <a
@@ -42,7 +42,7 @@ const recent = posts.slice(0, RECENT_LIMIT);
 
     {/* 文章超过 RECENT_LIMIT 篇时才单独列出全部，避免与「近期笔墨」重复 */}
     {posts.length > RECENT_LIMIT && (
-      <section class="card reveal">
+      <section class="card">
         <h2 class="font-heading text-2xl font-bold" style="color: var(--color-text);">全部文章</h2>
         <div class="mt-6 space-y-3">
           {posts.map((post) => (

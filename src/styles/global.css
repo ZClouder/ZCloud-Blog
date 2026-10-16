@@ -198,6 +198,22 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ---- 页面进场：内容整块淡入上浮，避免导航时硬切 ----
+   只动 main，不动 body——body 上给 opacity / transform 会给 fixed 的 Header
+   制造包含块，动画期间 Header 会跟着滚。 */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+main {
+  animation: page-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main { animation: none; }
+}
+
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
 }
@@ -217,13 +233,20 @@ h1, h2, h3, h4 {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer-sweep 5.5s ease-in-out infinite;
+  animation: shimmer-sweep 1.8s ease-in-out 0.5s 1 both;
 }
 
 @keyframes shimmer-sweep {
-  0%   { background-position: 130% 0; }
-  55%  { background-position: -30% 0; }
-  100% { background-position: -30% 0; }
+  from { background-position: 130% 0; }
+  to   { background-position: -30% 0; }
+}
+
+/* background-clip: text 在强制颜色模式下会失效，兜一下 */
+@media (forced-colors: active) {
+  .shimmer-text {
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
 }
 
 /* 暗色下流光偏冷蓝，亮色下偏暖白 */
@@ -273,8 +296,43 @@ h1, h2, h3, h4 {
   transform: none;
 }
 
+/* 错峰入场：容器本身不动，子元素按序依次浮起。
+   这里用 animation 而不是 transition——列表项往往自带 transition（如 .project-card），
+   简写形式会把 transition-delay 重置回 0，transition 方案会被它整个吃掉。
+   fill 用 backwards 而不是 both：动画结束后要回落到基础态，
+   否则 to 里的 transform: none 会永久压掉 hover 的位移。
+   前 10 个子元素由 nth-child 编号，免去在每个列表模板里手写 --i；
+   第 11 个起没有延迟——它们都在首屏之下，等你滚到早就动画完了。 */
+.stagger > * {
+  opacity: 0;
+}
+
+.stagger.is-visible > * {
+  opacity: 1;
+  animation: stagger-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.stagger > *:nth-child(1)  { --i: 0; }
+.stagger > *:nth-child(2)  { --i: 1; }
+.stagger > *:nth-child(3)  { --i: 2; }
+.stagger > *:nth-child(4)  { --i: 3; }
+.stagger > *:nth-child(5)  { --i: 4; }
+.stagger > *:nth-child(6)  { --i: 5; }
+.stagger > *:nth-child(7)  { --i: 6; }
+.stagger > *:nth-child(8)  { --i: 7; }
+.stagger > *:nth-child(9)  { --i: 8; }
+.stagger > *:nth-child(10) { --i: 9; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
+  .stagger > * { opacity: 1; }
+  .stagger.is-visible > * { animation: none; }
 }
 
 /* ---- 编号式列表（innei 式近期笔墨） ---- */

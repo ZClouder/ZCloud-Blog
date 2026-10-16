@@ -22,7 +22,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
       <WritingTabs active="posts" />
     </div>
 
-    <div class="card mt-10 space-y-3">
+    <div class="card stagger mt-10 space-y-3">
       {posts.map((post) => (
         <PostCard
           href={`/posts/${post.id}/`}
