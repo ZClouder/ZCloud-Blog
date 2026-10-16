@@ -121,12 +121,16 @@ const dateLabel = now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric
     </defs>
   </svg>
 
-  <!-- Scroll indicator -->
-  <div class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-bounce">
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-70">
+  <!-- Scroll indicator：点击滚到 Hero 下方的正文 -->
+  <a
+    href="#content"
+    aria-label="跳到正文"
+    class="scroll-cue absolute bottom-8 left-1/2 z-10 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full animate-bounce motion-reduce:animate-none"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
     </svg>
-  </div>
+  </a>
 </section>
 
 <style>
@@ -147,6 +151,27 @@ const dateLabel = now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric
   }
   .hero-meta svg {
     filter: drop-shadow(0 1px 3px rgb(0 0 0 / 0.6));
+  }
+
+  /* 下滑箭头：给个圆圈边框，明确它是能点的 */
+  .scroll-cue {
+    border: 1px solid rgb(255 255 255 / 0.3);
+    filter: drop-shadow(0 1px 4px rgb(0 0 0 / 0.4));
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .scroll-cue:hover {
+    background-color: rgb(255 255 255 / 0.18);
+    border-color: rgb(255 255 255 / 0.55);
+  }
+
+  .scroll-cue:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue { animation: none; }
   }
 </style>
 
