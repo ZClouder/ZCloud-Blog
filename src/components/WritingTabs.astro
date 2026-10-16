@@ -1,0 +1,32 @@
+---
+interface Props {
+  active: 'posts' | 'notes';
+}
+
+const { active } = Astro.props;
+
+const tabs = [
+  { key: 'posts', href: '/posts', label: '文章' },
+  { key: 'notes', href: '/notes', label: '随记' },
+] as const;
+---
+
+<div class="flex items-center gap-1 border-b" style="border-color: var(--color-border);">
+  {tabs.map((tab) => {
+    const isActive = active === tab.key;
+    return (
+      <a
+        href={tab.href}
+        aria-current={isActive ? 'page' : undefined}
+        class="-mb-px border-b-2 px-3 py-2 text-sm transition-colors hover:opacity-70"
+        style={
+          isActive
+            ? 'border-color: var(--color-accent); color: var(--color-text);'
+            : 'border-color: transparent; color: var(--color-text-muted);'
+        }
+      >
+        {tab.label}
+      </a>
+    );
+  })}
+</div>

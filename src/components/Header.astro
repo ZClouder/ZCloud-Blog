@@ -6,11 +6,13 @@ const { transparent = false } = Astro.props;
 const nav = [
   { href: '/', label: '首页' },
   { href: '/posts', label: '文章' },
+  { href: '/notes', label: '随记' },
   { href: '/projects', label: '项目' },
   { href: '/friends', label: '友邻' },
   { href: '/about', label: '关于' },
 ];
-const currentPath = Astro.url.pathname;
+// 去掉尾斜杠再比较，否则 /notes/ 与 /notes 不相等，导航高亮失效
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 ---
 
 <header

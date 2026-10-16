@@ -146,6 +146,83 @@ h1, h2, h3, h4 {
   color: var(--color-accent);
 }
 
+/* ---- 随记时间线 ---- */
+.note-timeline {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.note-timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  width: 1px;
+  background-color: var(--color-border);
+}
+
+.note-item {
+  position: relative;
+  padding-bottom: 3.25rem;
+}
+
+.note-item:last-child {
+  padding-bottom: 0;
+}
+
+.note-item::before {
+  content: "";
+  position: absolute;
+  left: -1.75rem;
+  top: 0.45rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-bg);
+  background-color: var(--color-border);
+  transition: background-color 0.25s ease;
+}
+
+.note-item:hover::before {
+  background-color: var(--color-accent);
+}
+
+.note-text p {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 2;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.note-text p + p {
+  margin-top: 0.5em;
+}
+
+.note-figure {
+  margin: 1.25rem 0 0;
+  max-width: 22rem;
+}
+
+.note-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.note-figure img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-figure img:hover { transform: none; }
+}
+
 .prose-blog {
   color: var(--color-text);
   line-height: 1.8;
