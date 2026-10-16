@@ -33,9 +33,12 @@ const formatDate = (date: Date) =>
     </div>
 
     {entries.length === 0 ? (
-      <p class="mt-10 text-sm" style="color: var(--color-text-muted);">还没有随记。</p>
+      <div class="card mt-10">
+        <p class="text-sm" style="color: var(--color-text-muted);">还没有随记。</p>
+      </div>
     ) : (
-      <ol class="note-timeline mt-10">
+      <div class="card mt-10">
+        <ol class="note-timeline">
         {entries.map(({ note, Content }) => (
           <li class="note-item reveal" id={`note-${note.id}`}>
             <time
@@ -72,7 +75,8 @@ const formatDate = (date: Date) =>
             )}
           </li>
         ))}
-      </ol>
+        </ol>
+      </div>
     )}
   </main>
   <Footer />

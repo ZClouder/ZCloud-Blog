@@ -1,4 +1,6 @@
 ---
+import { relativeTime, isoDate } from '../utils/time';
+
 interface Props {
   posts: { id: string; data: { title: string; pubDate: Date; tags: string[] } }[];
 }
@@ -27,9 +29,10 @@ const shortDate = (d: Date) =>
             </span>
           )}
         </span>
-        <time class="font-mono text-xs" style="color: var(--color-text-muted);">
-          {shortDate(post.data.pubDate)}
-        </time>
+        <span class="flex shrink-0 flex-col items-end gap-0.5 font-mono text-xs" style="color: var(--color-text-muted);">
+          <time datetime={isoDate(post.data.pubDate)} data-relative>{relativeTime(post.data.pubDate)}</time>
+          <span class="opacity-60">{shortDate(post.data.pubDate)}</span>
+        </span>
       </a>
     </li>
   ))}

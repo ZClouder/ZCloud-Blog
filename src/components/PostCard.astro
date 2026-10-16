@@ -1,4 +1,6 @@
 ---
+import { relativeTime, isoDate } from '../utils/time';
+
 interface Props {
   href: string;
   title: string;
@@ -8,21 +10,28 @@ interface Props {
 }
 
 const { href, title, description, pubDate, tags } = Astro.props;
-const formatted = pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+const absolute = pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
 <a
   href={href}
-  class="group block border-b py-8 transition-colors first:pt-0"
-  style="border-color: var(--color-border);"
+  class="post-card group block rounded-lg p-5"
+  style="background-color: var(--color-surface);"
 >
-  <time class="font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">{formatted}</time>
+  <div class="flex flex-wrap items-center gap-x-2 font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">
+    <time datetime={isoDate(pubDate)} data-relative>{relativeTime(pubDate)}</time>
+    <span class="opacity-40">·</span>
+    <span>{absolute}</span>
+  </div>
+
   <h2 class="font-heading mt-2 text-2xl font-bold transition-colors" style="color: var(--color-text);">
     <span class="bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-300 group-hover:bg-[length:100%_1px]" style={`background-image: linear-gradient(var(--color-accent), var(--color-accent))`}>
       {title}
     </span>
   </h2>
+
   <p class="mt-2 line-clamp-2 text-sm leading-relaxed" style="color: var(--color-text-muted);">{description}</p>
+
   {tags.length > 0 && (
     <div class="mt-3 flex flex-wrap gap-2">
       {tags.map((tag) => (
@@ -36,3 +45,28 @@ const formatted = pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 
     </div>
   )}
 </a>
+
+<style>
+  .post-card {
+    border: 1px solid transparent;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .post-card:hover {
+    border-color: var(--color-border);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.06);
+  }
+
+  [data-theme="dark"] .post-card:hover {
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.32);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-card { transition: none; }
+    .post-card:hover { transform: none; }
+  }
+</style>

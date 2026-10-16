@@ -31,6 +31,27 @@ const pageTitle = title === siteTitle ? title : `${title} · ${siteTitle}`;
     <slot />
     <Search />
     <script is:inline>
+      // 相对时间：构建时渲染的是旧值，这里按真实当前时间刷新
+      (function () {
+        const els = document.querySelectorAll('time[data-relative]');
+        if (!els.length) return;
+        const now = Date.now();
+        els.forEach((el) => {
+          const iso = el.getAttribute('datetime');
+          if (!iso) return;
+          const days = Math.floor((now - new Date(iso + 'T00:00:00').valueOf()) / 86400000);
+          let text;
+          if (days < 0) text = '尚未到来';
+          else if (days === 0) text = '今天';
+          else if (days === 1) text = '昨天';
+          else if (days < 30) text = days + ' 天前';
+          else if (days < 365) text = Math.floor(days / 30) + ' 个月前';
+          else text = Math.floor(days / 365) + ' 年前';
+          el.textContent = text;
+        });
+      })();
+    </script>
+    <script is:inline>
       // 滚动入场：元素进入视口后淡入上移
       (function () {
         const els = document.querySelectorAll('.reveal');

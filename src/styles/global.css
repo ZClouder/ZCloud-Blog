@@ -18,10 +18,14 @@
   --font-serif: "Noto Serif SC", "Songti SC", serif;
 }
 
-/* GitHub Primer 色板（ursb.me 同款）——accent 保留原有蓝 */
+/* GitHub Primer 色板（ursb.me 同款）——accent 保留原有蓝
+   画布 + 卡片分层：--color-bg 是页面底色（画布），--color-card 是浮在上面的卡片，
+   --color-surface 是卡片内部的内嵌块（代码块、列表行），--color-track 是分段控件轨道。 */
 :root {
-  --color-bg: #ffffff;
+  --color-bg: #f6f8fa;
+  --color-card: #ffffff;
   --color-surface: #f6f8fa;
+  --color-track: #eaeef2;
   --color-text: #1f2328;
   --color-text-muted: #59636e;
   --color-border: #d0d7de;
@@ -31,12 +35,80 @@
 
 [data-theme="dark"] {
   --color-bg: #0d1117;
-  --color-surface: #161b22;
+  --color-card: #161b22;
+  --color-surface: #1c2128;
+  --color-track: #1c2128;
   --color-text: #e6edf3;
   --color-text-muted: #8b949e;
-  --color-border: #21262d;
+  --color-border: #30363d;
   --color-accent: #64b5f6;
   --color-accent-soft: #162a40;
+}
+
+/* ---- 卡片容器 ---- */
+.card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 1.75rem;
+  }
+}
+
+/* ---- 分段控件（innei 式导航） ---- */
+.nav-seg {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9999px;
+  background-color: var(--color-track);
+  border: 1px solid var(--color-border);
+}
+
+.nav-seg-item {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-seg-item:hover {
+  color: var(--color-text);
+}
+
+.nav-seg-item[aria-current="page"] {
+  background-color: var(--color-card);
+  color: var(--color-text);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.07), 0 0 0 1px rgb(0 0 0 / 0.04);
+}
+
+[data-theme="dark"] .nav-seg-item[aria-current="page"] {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 小屏放不下六个导航项，做成可横滑，右缘渐隐提示还有内容 */
+@media (max-width: 639px) {
+  .nav-scroll {
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+  }
 }
 
 html {

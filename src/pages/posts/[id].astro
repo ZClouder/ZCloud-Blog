@@ -43,13 +43,16 @@ const readingMinutes = Math.max(1, Math.ceil(plain.length / 400));
 const lastTouched = (post.data.updatedDate ?? post.data.pubDate).valueOf();
 const staleDays = Math.floor((Date.now() - lastTouched) / 86400000);
 const isStale = staleDays > 180;
+
+// 只有两个以上小节才值得给目录留一栏，否则右侧会挂一个空卡片
+const tocItems = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
   <Header />
   <main class="mx-auto max-w-5xl px-6 py-16">
-    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_200px] lg:gap-12">
-      <article class="min-w-0">
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-6">
+      <article class="card min-w-0">
         <header class="mb-10">
           <div class="flex flex-wrap items-center gap-3 font-mono text-xs tracking-wide" style="color: var(--color-text-muted);">
             <time datetime={post.data.pubDate.toISOString().slice(0, 10)}>{formatted}</time>
@@ -109,9 +112,13 @@ const isStale = staleDays > 180;
         <Comments />
       </article>
 
-      <aside class="hidden lg:block" data-pagefind-ignore>
-        <Toc headings={headings} />
-      </aside>
+      {tocItems.length > 1 && (
+        <aside class="hidden lg:block">
+          <div class="card sticky top-24" data-pagefind-ignore>
+            <Toc headings={headings} />
+          </div>
+        </aside>
+      )}
     </div>
   </main>
   <Footer />

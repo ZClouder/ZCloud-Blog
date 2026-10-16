@@ -20,27 +20,37 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
   class="fixed top-0 z-50 w-full border-b transition-all duration-300"
   data-transparent={transparent ? "true" : undefined}
   data-pagefind-ignore
-  style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-bg) 85%, transparent);"
+  style="border-color: var(--color-border); background-color: color-mix(in srgb, var(--color-bg) 88%, transparent);"
 >
-  <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
-    <a href="/" class="font-heading text-lg font-bold tracking-wide" style="color: var(--color-text);">
+  <div class="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
+    <a
+      href="/"
+      class="site-title font-heading shrink-0 text-sm font-bold tracking-wide sm:text-lg"
+      style="color: var(--color-text);"
+    >
       流雲の宝藏
     </a>
-    <nav class="flex items-center gap-6">
-      {nav.map((item) => (
-        <a
-          href={item.href}
-          class="nav-link text-sm transition-colors hover:opacity-70"
-          style={`color: ${currentPath === item.href ? 'var(--color-accent)' : 'var(--color-text-muted)'}`}
-        >
-          {item.label}
-        </a>
-      ))}
+
+    <nav class="nav-scroll no-scrollbar flex min-w-0 flex-1 overflow-x-auto sm:justify-center">
+      <div class="nav-seg">
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            class="nav-seg-item"
+            aria-current={currentPath === item.href ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </nav>
+
+    <div class="flex shrink-0 items-center gap-2">
       <button
         id="search-open"
         type="button"
         aria-label="搜索"
-        class="flex h-8 w-8 items-center justify-center rounded-full border transition-colors hover:opacity-70"
+        class="header-btn flex h-8 w-8 items-center justify-center rounded-full border transition-colors hover:opacity-70"
         style="border-color: var(--color-border); color: var(--color-text);"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -52,7 +62,7 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
         id="theme-toggle"
         type="button"
         aria-label="切换主题"
-        class="flex h-8 w-8 items-center justify-center rounded-full border transition-colors hover:opacity-70"
+        class="header-btn flex h-8 w-8 items-center justify-center rounded-full border transition-colors hover:opacity-70"
         style="border-color: var(--color-border); color: var(--color-text);"
       >
         <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden">
@@ -63,7 +73,7 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
       </button>
-    </nav>
+    </div>
   </div>
 </header>
 
@@ -73,13 +83,40 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
     border-color: transparent !important;
     backdrop-filter: none;
   }
-  #site-header[data-transparent="true"] a,
-  #site-header[data-transparent="true"] button {
-    color: white !important;
-    border-color: rgba(255,255,255,0.3) !important;
-  }
+
   #site-header:not([data-transparent="true"]) {
     backdrop-filter: blur(12px);
+  }
+
+  /* 首页透明态：标题与圆形按钮转白 */
+  #site-header[data-transparent="true"] .site-title {
+    color: #fff !important;
+  }
+
+  #site-header[data-transparent="true"] .header-btn {
+    color: #fff !important;
+    border-color: rgb(255 255 255 / 0.35) !important;
+  }
+
+  /* 分段控件玻璃质感变体，压在 Hero 大图上 */
+  #site-header[data-transparent="true"] .nav-seg {
+    background-color: rgb(255 255 255 / 0.14);
+    border-color: rgb(255 255 255 / 0.22);
+    backdrop-filter: blur(10px);
+  }
+
+  #site-header[data-transparent="true"] .nav-seg-item {
+    color: rgb(255 255 255 / 0.78);
+  }
+
+  #site-header[data-transparent="true"] .nav-seg-item:hover {
+    color: #fff;
+  }
+
+  #site-header[data-transparent="true"] .nav-seg-item[aria-current="page"] {
+    background-color: rgb(255 255 255 / 0.24);
+    color: #fff;
+    box-shadow: none;
   }
 </style>
 
